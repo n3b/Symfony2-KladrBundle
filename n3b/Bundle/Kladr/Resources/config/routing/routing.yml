@@ -1,0 +1,28 @@
+region:
+  pattern: /region/{query}
+  defaults: { _controller: kladr:getRegions }
+
+region_with_limit:
+  pattern: /region/limit_to/{region}/{query}
+  defaults: { _controller: kladr:getLimitedRegions }
+  requirements:
+    region: \d{1,2}
+
+street:
+  pattern: /street/{region}/{query}
+  defaults: { _controller: kladr:getStreets }
+  requirements:
+    region: \d{10,11}
+
+ems_to:
+  pattern: /emsTo/{region}/{weight}
+  defaults: { _controller: kladr:getEmsTo }
+  requirements:
+    region: \d{10,11}
+    weight: ([0-9]+(\.[0-9]+)?)
+
+adds_by_street_code:
+  pattern: /adds_by_code/{code}
+  defaults: { _controller: kladr:getAddsByCode, code: '000000000000000' }
+  requirements:
+    code: \d{15}
