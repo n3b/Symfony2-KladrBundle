@@ -2,7 +2,7 @@
 Пакет для работы с Классификатором адресов России (КЛАДР) http://www.gnivc.ru/Document.aspx?id=1571
 мануал по структуре КЛАДРа можно найти здесь http://www.ksoft.ru/opis_kladr.htm
 
-Внимание! Для работы с *.dbf файлями необходимо расширение dbase http://php.net/manual/en/book.dbase.php
+Внимание! Для работы с *.dbf файлами необходимо расширение dbase http://php.net/manual/en/book.dbase.php
 которое исключено из последних сборок
 
 код региона по КЛАДРу
@@ -24,9 +24,11 @@
 ./console kladr:import:ems (по желанию)
 
 подключить маршруты в вашем приложении
+
 # routing.yml
-kladr:
-  resource: "@n3bKladrBundle/Resources/config/routing/routing.yml"
-  prefix:   /kladr
+
+    kladr:
+        resource: "@n3bKladrBundle/Resources/config/routing/routing.yml"
+        prefix:   /kladr
 
 рабочий сервис - Kladr\Model\KladrManager
