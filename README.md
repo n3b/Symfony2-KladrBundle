@@ -19,13 +19,13 @@
 Создаем таблицы в БД ./console doctrine:schema:create (обязательно указать mapping n3bKladrBundle в конфиге doctrine)
 
 Импортируем данные из *.dbf: 
-./console kladr:import:region  (необязательный параметр --batch=x, кол-во записей на одну транзакцию, 2000 по умолчанию)
-./console kladr:import:street
-./console kladr:import:ems (по желанию)
+
+    ./console kladr:import:region  (необязательный параметр --batch=x, кол-во записей на одну транзакцию, 2000 по умолчанию)
+    ./console kladr:import:street
+    ./console kladr:import:ems (по желанию)
 
 подключить маршруты в вашем приложении
-
-# routing.yml
+routing.yml:
 
     kladr:
         resource: "@n3bKladrBundle/Resources/config/routing/routing.yml"
