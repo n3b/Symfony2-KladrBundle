@@ -91,8 +91,8 @@ EOT
     public function deleteNotLinkedElements()
     {
         $sql = "
-            DELETE FROM KladrStreet s
-            WHERE s.parentCode NOT IN
+            DELETE FROM KladrStreet
+            WHERE parentCode NOT IN
                 (SELECT id FROM KladrRegion)";
         $stmt = $this->em->getConnection()->prepare($sql);
 

@@ -3,7 +3,6 @@
 namespace n3b\Bundle\Kladr\Service;
 
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 
 class Kladr
 {
