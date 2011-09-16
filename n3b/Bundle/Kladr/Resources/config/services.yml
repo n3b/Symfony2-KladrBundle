@@ -1,4 +1,4 @@
 services:
   kladr:
-    class:      n3b\Bundle\Kladr\Model\KladrManager
+    class:      n3b\Bundle\Kladr\Service\Kladr
     arguments:  ['@doctrine.orm.entity_manager']

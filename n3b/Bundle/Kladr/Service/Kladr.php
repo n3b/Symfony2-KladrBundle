@@ -1,11 +1,11 @@
 <?php
 
-namespace n3b\Bundle\Kladr\Model;
+namespace n3b\Bundle\Kladr\Service;
 
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 
-class KladrManager extends Controller
+class Kladr
 {
     private $em;
     private $repositories;
@@ -13,51 +13,39 @@ class KladrManager extends Controller
     public function __construct($em)
     {
         $this->em = $em;
-        $this->setRepository('Region');
-        $this->setRepository('Street');
-    }
-
-    protected function setRepository($entity)
-    {
-        $this->repositories[$entity] = $this->em->getRepository('n3b\Bundle\Kladr\Entity\\'.$entity);
-    }
-    
-    protected function getRepository($entity)
-    {
-        if(\array_key_exists($entity, $this->repositories))
-            return $this->repositories[$entity];
+        $this->repo['region'] = $this->em->getRepository('n3b\Bundle\Kladr\Entity\Region');
+        $this->repo['street'] = $this->em->getRepository('n3b\Bundle\Kladr\Entity\Street');
     }
 
     protected function getList($entity, $args)
     {
-        if(isset($this->repositories[$entity]))
-            return $this->repositories[$entity]->findByLead($args);
+        return $this->repo[$entity]->findByLead($args);
     }
 
     public function getRegions($query)
     {
-        $res = $this->getList('Region', array('query' => $query));
+        $res = $this->getList('region', array('query' => $query));
 
         return new Response(\json_encode($res));
     }
 
     public function getLimitedRegions($query, $region)
     {
-        $res = $this->getList('Region', array('query' => $query, 'region' => $region));
+        $res = $this->getList('region', array('query' => $query, 'region' => $region));
 
         return new Response(\json_encode($res));
     }
 
     public function getStreets($query, $region)
     {
-        $res = $this->getList('Street', array('query' => $query, 'region' => $region));
+        $res = $this->getList('street', array('query' => $query, 'region' => $region));
 
         return new Response(\json_encode($res));
     }
 
     public function getEmsTo($region, $weight)
     {
-        $region = $this->getRepository('Region')->findOneBy(array('code' => $region));
+        $region = $this->repo['region']->findOneBy(array('code' => $region));
 
         while(!$region->getEmsTo()) {
             $region = $region->getParent();
@@ -71,8 +59,8 @@ class KladrManager extends Controller
     
     public function getAddsByCode($code)
     {
-        $street = $this->getRepository('Street')->findOneBy(array('code' => $code));
-        $region = $this->getRepository('Region')->findOneBy(array('code' => substr($code, 0, -4)));
+        $street = $this->repo['street']->findOneBy(array('code' => $code));
+        $region = $this->repo['region']->findOneBy(array('code' => substr($code, 0, -4)));
         if(!$street || !$region)
             return new Response(\json_encode(array('status' => 'err', 'err' => 'not found')));
 

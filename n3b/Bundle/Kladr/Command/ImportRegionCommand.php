@@ -64,7 +64,6 @@ EOT
             $region->setSocr(trim(iconv('cp866', 'utf8', $row['SOCR'])));
 
             $em->persist($region);
-            $em->flush($region);
 
             if (($i % $batchSize) == 0) {
                 $em->flush();

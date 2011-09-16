@@ -33,4 +33,4 @@ routing.yml:
         resource: "@n3bKladrBundle/Resources/config/routing/routing.yml"
         prefix:   /kladr
 
-рабочий сервис - Kladr\Model\KladrManager
+рабочий сервис - Kladr\Service\Kladr
