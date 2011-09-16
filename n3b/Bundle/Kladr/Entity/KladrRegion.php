@@ -5,18 +5,17 @@ namespace n3b\Bundle\Kladr\Entity;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * @ORM\Entity(repositoryClass="n3b\Bundle\Kladr\Entity\StreetRepository")
+ * @ORM\Entity(repositoryClass="n3b\Bundle\Kladr\Entity\RegionRepository")
  */
-Class Street
+Class KladrRegion
 {
     /**
      * @ORM\Id
-     * @ORM\Column(type="integer")
-     * @ORM\GeneratedValue(strategy="AUTO")
+     * @ORM\Column(type="bigint")
      */
     private $id;
     /**
-     * @ORM\Column
+     * @ORM\Column(type="string", length="20")
      */
     private $socr;
     /**
@@ -24,17 +23,26 @@ Class Street
      */
     private $title;
     /**
-     * @ORM\ManyToOne(targetEntity="Region")
+     * @ORM\ManyToOne(targetEntity="KladrRegion")
+     * @ORM\JoinColumn(name="parent_id", referencedColumnName="id", onDelete="CASCADE")
      */
     private $parent;
     /**
-     * @ORM\Column(length="15", unique="true")
+     * @ORM\Column(nullable="true")
      */
-    private $code;
+    private $fullParentTitle;
 	/**
-     * @ORM\Column(length="11")
+     * @ORM\Column(length="11", nullable="true")
      */
     private $parentCode;
+    /**
+     * @ORM\Column(type="smallint")
+     */
+    private $level;
+    /**
+     * @ORM\Column(nullable="true")
+     */
+    private $emsTo;
     /**
      * @ORM\Column(type="integer")
      */
@@ -45,15 +53,19 @@ Class Street
     private $ocatd;
 
     /**
-     * Get id
+     * Set id
      *
-     * @return integer $id
+     * @param bigint $id
      */
+    public function setId($id)
+    {
+        $this->id = $id;
+    }
 
     /**
      * Get id
      *
-     * @return integer $id
+     * @return bigint $id
      */
     public function getId()
     {
@@ -101,23 +113,23 @@ Class Street
     }
 
     /**
-     * Set code
+     * Set fullParentTitle
      *
-     * @param bigint $code
+     * @param string $fullParentTitle
      */
-    public function setCode($code)
+    public function setFullParentTitle($fullParentTitle)
     {
-        $this->code = $code;
+        $this->fullParentTitle = $fullParentTitle;
     }
 
     /**
-     * Get code
+     * Get fullParentTitle
      *
-     * @return bigint $code
+     * @return string $fullParentTitle
      */
-    public function getCode()
+    public function getFullParentTitle()
     {
-        return $this->code;
+        return $this->fullParentTitle;
     }
 
     /**
@@ -141,23 +153,43 @@ Class Street
     }
 
     /**
-     * Set parent
+     * Set level
      *
-     * @param n3b\Bundle\Kladr\Entity\Region $parent
+     * @param smallint $level
      */
-    public function setParent(\n3b\Bundle\Kladr\Entity\Region $parent)
+    public function setLevel($level)
     {
-        $this->parent = $parent;
+        $this->level = $level;
     }
 
     /**
-     * Get parent
+     * Get level
      *
-     * @return n3b\Bundle\Kladr\Entity\Region $parent
+     * @return smallint $level
      */
-    public function getParent()
+    public function getLevel()
     {
-        return $this->parent;
+        return $this->level;
+    }
+
+    /**
+     * Set emsTo
+     *
+     * @param string $emsTo
+     */
+    public function setEmsTo($emsTo)
+    {
+        $this->emsTo = $emsTo;
+    }
+
+    /**
+     * Get emsTo
+     *
+     * @return string $emsTo
+     */
+    public function getEmsTo()
+    {
+        return $this->emsTo;
     }
 
     /**
@@ -183,7 +215,7 @@ Class Street
     /**
      * Set ocatd
      *
-     * @param integer $ocatd
+     * @param bigint $ocatd
      */
     public function setOcatd($ocatd)
     {
@@ -193,10 +225,30 @@ Class Street
     /**
      * Get ocatd
      *
-     * @return integer $ocatd
+     * @return bigint $ocatd
      */
     public function getOcatd()
     {
         return $this->ocatd;
+    }
+
+    /**
+     * Set parent
+     *
+     * @param n3b\Bundle\Kladr\Entity\KladrRegion $parent
+     */
+    public function setParent(\n3b\Bundle\Kladr\Entity\KladrRegion $parent)
+    {
+        $this->parent = $parent;
+    }
+
+    /**
+     * Get parent
+     *
+     * @return n3b\Bundle\Kladr\Entity\KladrRegion $parent
+     */
+    public function getParent()
+    {
+        return $this->parent;
     }
 }

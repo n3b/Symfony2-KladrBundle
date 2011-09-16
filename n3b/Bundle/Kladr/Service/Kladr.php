@@ -17,28 +17,28 @@ class Kladr
         $this->repo['street'] = $this->em->getRepository('n3b\Bundle\Kladr\Entity\Street');
     }
 
-    protected function getList($entity, $args)
-    {
-        return $this->repo[$entity]->findByLead($args);
-    }
-
     public function getRegions($query)
     {
-        $res = $this->getList('region', array('query' => $query));
-
-        return new Response(\json_encode($res));
-    }
-
-    public function getLimitedRegions($query, $region)
-    {
-        $res = $this->getList('region', array('query' => $query, 'region' => $region));
+        try {
+            $res = $this->repo['region']->getByQuery($query);
+            $res['status'] = 'ok';
+        } catch(\Exception $e) {
+            $res['status'] = 'error';
+            $res['err_message'] = $e->getMessage();
+        }
 
         return new Response(\json_encode($res));
     }
 
     public function getStreets($query, $region)
     {
-        $res = $this->getList('street', array('query' => $query, 'region' => $region));
+        try {
+            $res = $this->repo['street']->getByQuery($query, $region);
+            $res['status'] = 'ok';
+        } catch(\Exception $e) {
+            $res['status'] = 'error';
+            $res['err_message'] = $e->getMessage();
+        }
 
         return new Response(\json_encode($res));
     }

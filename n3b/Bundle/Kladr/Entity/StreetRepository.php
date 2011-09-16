@@ -6,35 +6,33 @@ use Doctrine\ORM\EntityRepository;
 
 class StreetRepository extends EntityRepository
 {
-    public function findByLead($args)
-    {
-        $args['region'] = $args['region'] ?: '77000000000';
 
+    public function getByQuery($query, $region)
+    {
         $dql = "
             SELECT s FROM n3b\Bundle\Kladr\Entity\Street s
             JOIN s.parent r WITH r.code = :region
             WHERE LOWER(s.title) LIKE :query
-            ";
-        $dql .= " ORDER BY s.title";
+            ORDER BY s.title";
+        $count = "
+            SELECT COUNT(s) FROM n3b\Bundle\Kladr\Entity\Street s
+            JOIN s.parent r WITH r.code = :region
+            WHERE LOWER(s.title) LIKE :query";
 
         $q = $this->getEntityManager()->createQuery($dql);
         $q->setParameters(array(
-            'query' => \mb_strtolower($args['query'], 'utf-8').'%',
-            'region' => $args['region']
-            ));
-        
-        return $q->getArrayResult();
-    }
+            'query' => \mb_strtolower($query, 'utf-8') . '%',
+            'region' => $region
+        ));
+        $qCount = $this->getEntityManager()->createQuery($count);
+        $qCount->setParameters(array(
+            'query' => \mb_strtolower($query, 'utf-8') . '%',
+            'region' => $region
+        ));
 
-    public function setParents()
-    {
-        // проставляет parent_id по коду
-        $sql = "
-            UPDATE Street s, Region r
-            SET s.parent_id = r.id
-            WHERE s.parentCode = r.code
-            ";
-        $stmt = $this->getEntityManager()->getConnection()->prepare($sql);
-        $stmt->execute();
+        $res['items'] = $q->getArrayResult();
+        $res['count'] = $qCount->getSingleScalarResult();
+
+        return $res;
     }
 }

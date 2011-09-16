@@ -5,18 +5,17 @@ namespace n3b\Bundle\Kladr\Entity;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * @ORM\Entity(repositoryClass="n3b\Bundle\Kladr\Entity\RegionRepository")
+ * @ORM\Entity(repositoryClass="n3b\Bundle\Kladr\Entity\StreetRepository")
  */
-Class Region
+Class KladrStreet
 {
     /**
      * @ORM\Id
-     * @ORM\Column(type="integer")
-     * @ORM\GeneratedValue(strategy="AUTO")
+     * @ORM\Column(type="bigint")
      */
     private $id;
     /**
-     * @ORM\Column(type="string", length="20")
+     * @ORM\Column
      */
     private $socr;
     /**
@@ -24,29 +23,14 @@ Class Region
      */
     private $title;
     /**
-     * @ORM\ManyToOne(targetEntity="Region")
+     * @ORM\ManyToOne(targetEntity="KladrRegion")
+     * @ORM\JoinColumn(name="parent_id", referencedColumnName="id", onDelete="CASCADE")
      */
     private $parent;
-    /**
-     * @ORM\Column
-     */
-    private $parentStr = '';
-    /**
-     * @ORM\Column(length="11", nullable="true")
-     */
-    private $code;
 	/**
-     * @ORM\Column(length="11", nullable="true")
+     * @ORM\Column(length="11")
      */
     private $parentCode;
-    /**
-     * @ORM\Column(type="smallint")
-     */
-    private $level;
-    /**
-     * @ORM\Column(nullable="true")
-     */
-    private $emsTo;
     /**
      * @ORM\Column(type="integer")
      */
@@ -57,9 +41,19 @@ Class Region
     private $ocatd;
 
     /**
+     * Set id
+     *
+     * @param bigint $id
+     */
+    public function setId($id)
+    {
+        $this->id = $id;
+    }
+
+    /**
      * Get id
      *
-     * @return integer $id
+     * @return bigint $id
      */
     public function getId()
     {
@@ -107,46 +101,6 @@ Class Region
     }
 
     /**
-     * Set level
-     *
-     * @param smallint $level
-     */
-    public function setLevel($level)
-    {
-        $this->level = $level;
-    }
-
-    /**
-     * Get level
-     *
-     * @return smallint $level
-     */
-    public function getLevel()
-    {
-        return $this->level;
-    }
-
-    /**
-     * Set code
-     *
-     * @param string $code
-     */
-    public function setCode($code)
-    {
-        $this->code = $code;
-    }
-
-    /**
-     * Get code
-     *
-     * @return string $code
-     */
-    public function getCode()
-    {
-        return $this->code;
-    }
-
-    /**
      * Set parentCode
      *
      * @param string $parentCode
@@ -189,7 +143,7 @@ Class Region
     /**
      * Set ocatd
      *
-     * @param integer $ocatd
+     * @param bigint $ocatd
      */
     public function setOcatd($ocatd)
     {
@@ -199,7 +153,7 @@ Class Region
     /**
      * Get ocatd
      *
-     * @return integer $ocatd
+     * @return bigint $ocatd
      */
     public function getOcatd()
     {
@@ -207,31 +161,11 @@ Class Region
     }
 
     /**
-     * Set parentStr
-     *
-     * @param string $parentStr
-     */
-    public function setParentStr($parentStr)
-    {
-        $this->parentStr = $parentStr;
-    }
-
-    /**
-     * Get parentStr
-     *
-     * @return string $parentStr
-     */
-    public function getParentStr()
-    {
-        return $this->parentStr;
-    }
-
-    /**
      * Set parent
      *
-     * @param n3b\Bundle\Kladr\Entity\Region $parent
+     * @param n3b\Bundle\Kladr\Entity\KladrRegion $parent
      */
-    public function setParent(\n3b\Bundle\Kladr\Entity\Region $parent)
+    public function setParent(\n3b\Bundle\Kladr\Entity\KladrRegion $parent)
     {
         $this->parent = $parent;
     }
@@ -239,30 +173,10 @@ Class Region
     /**
      * Get parent
      *
-     * @return n3b\Bundle\Kladr\Entity\Region $parent
+     * @return n3b\Bundle\Kladr\Entity\KladrRegion $parent
      */
     public function getParent()
     {
         return $this->parent;
-    }
-
-    /**
-     * Set emsTo
-     *
-     * @param string $emsTo
-     */
-    public function setEmsTo($emsTo)
-    {
-        $this->emsTo = $emsTo;
-    }
-
-    /**
-     * Get emsTo
-     *
-     * @return string $emsTo
-     */
-    public function getEmsTo()
-    {
-        return $this->emsTo;
     }
 }

@@ -7,7 +7,7 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Bundle\DoctrineBundle\Command\DoctrineCommand;
-use n3b\Bundle\Kladr\Entity\Street;
+use n3b\Bundle\Kladr\Entity\KladrStreet;
 
 class ImportStreetCommand extends DoctrineCommand
 {
@@ -26,7 +26,9 @@ EOT
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         echo 'Started at ', date('H:i:s'), "\n";
-        $em = $this->getEntityManager('default');
+        $em = $this->em = $this->getEntityManager('default');
+
+        $this->truncate();
 
         $db_path = __DIR__ . '/../Resources/KLADR/STREET.DBF';
         $db = dbase_open($db_path, 0) or die("Error! Could not open dbase database file '$db_path'.");
@@ -36,7 +38,7 @@ EOT
         for ($i = 1; $i <= $record_numbers; $i++) {
             $row = dbase_get_record_with_names($db, $i);
 
-            $street = new Street();
+            $street = new KladrStreet();
             $street->setTitle(trim(iconv('cp866', 'utf8', $row['NAME'])));
 
             $code = trim($row['CODE']);
@@ -44,8 +46,8 @@ EOT
                 continue;
 
             $code = substr($code, 0, -2);
-            $street->setCode(str_pad($code, 15, '0', STR_PAD_LEFT));
-            $street->setParentCode(str_pad(substr($code, 0, -4), 11, '0', STR_PAD_RIGHT));
+            $street->setId($code);
+            $street->setParentCode(intval(str_pad(substr($code, 0, -4), 11, '0', STR_PAD_RIGHT)));
 
             $street->setZip(trim($row['INDEX']));
             $street->setOcatd(trim($row['OCATD']));
@@ -63,7 +65,37 @@ EOT
         echo 'Success', "\n";
 
         echo 'Assign parents', "\n";
-        $em->getRepository('n3b\Bundle\Kladr\Entity\Street')->setParents();
+        $this->deleteNotLinkedElements();
+        $this->updateParents();
         echo 'Success', "\n";
+    }
+
+    public function truncate()
+    {
+        $sql = "TRUNCATE TABLE KladrStreet";
+        $stmt = $this->em->getConnection()->prepare($sql);
+
+        return $stmt->execute();
+    }
+
+    public function updateParents()
+    {
+        $sql = "
+            UPDATE KladrStreet s
+            SET s.parent_id = s.parentCode";
+        $stmt = $this->em->getConnection()->prepare($sql);
+
+        return $stmt->execute();
+    }
+
+    public function deleteNotLinkedElements()
+    {
+        $sql = "
+            DELETE FROM KladrStreet s
+            WHERE s.parentCode NOT IN
+                (SELECT id FROM KladrRegion)";
+        $stmt = $this->em->getConnection()->prepare($sql);
+
+        return $stmt->execute();
     }
 }

@@ -7,7 +7,7 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Bundle\DoctrineBundle\Command\DoctrineCommand;
-use n3b\Bundle\Kladr\Entity\Region;
+use n3b\Bundle\Kladr\Entity\KladrRegion;
 
 class ImportRegionCommand extends DoctrineCommand
 {
@@ -26,7 +26,9 @@ EOT
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         echo 'Started at ', date('H:i:s'), "\n";
-        $em = $this->getEntityManager('default');
+        $em = $this->em = $this->getEntityManager('default');
+
+        $this->truncate();
 
         $db_path = __DIR__ . '/../Resources/KLADR/KLADR.DBF';
         $db = dbase_open($db_path, 0) or die("Error! Could not open dbase database file '$db_path'.");
@@ -35,7 +37,7 @@ EOT
         $batchSize = $input->getOption('batch');
         for ($i = 1; $i <= $record_numbers; $i++) {
             $row = dbase_get_record_with_names($db, $i);
-            $region = new Region();
+            $region = new KladrRegion();
             $region->setTitle(trim(iconv('cp866', 'utf8', $row['NAME'])));
 
             $code = trim($row['CODE']);
@@ -44,7 +46,7 @@ EOT
                 continue;
             
             $code = substr($code, 0, -2);
-            $region->setCode(str_pad($code, 11, '0', STR_PAD_LEFT));
+            $region->setId($code);
 
             if(substr($code, 8) != '000')
                 $region->setLevel(4);
@@ -57,7 +59,7 @@ EOT
 
             $parentCode = substr($code, 0, 0 - 3 * (5 - $region->getLevel()));
 
-            $region->setParentCode(strlen($parentCode) ? str_pad($parentCode, 11, '0', STR_PAD_RIGHT) : null);
+            $region->setParentCode(strlen($parentCode) ? intval(str_pad($parentCode, 11, '0', STR_PAD_RIGHT)) : null);
 
             $region->setZip(trim($row['INDEX']));
             $region->setOcatd(trim($row['OCATD']));
@@ -74,7 +76,56 @@ EOT
         echo 'Success', "\n";
 
         echo 'Assign parents', "\n";
-        $em->getRepository('n3b\Bundle\Kladr\Entity\Region')->setParents();
+        $this->deleteNotLinkedElements();
+        $this->updateParents();
         echo 'Success', "\n";
+    }
+
+    public function truncate()
+    {
+        $sql = "TRUNCATE TABLE KladrRegion";
+        $stmt = $this->em->getConnection()->prepare($sql);
+        
+        return $stmt->execute();
+    }
+
+    public function updateParents()
+    {
+        $sql = "
+            UPDATE KladrRegion r
+            SET r.parent_id = r.parentCode";
+        $stmt = $this->em->getConnection()->prepare($sql);
+
+        return $stmt->execute();
+    }
+
+    public function setFullParentTitle()
+    {
+        for($i = 1; $i <= 3; $i++) {
+            $sql = "
+                UPDATE Region r
+                JOIN r.parent p WITH p.level = $i
+                SET r.fullParentTitle = CONCAT(', ', p.title, ' ', LOWER(p.socr), p.fullParentTitle)
+                ";
+            $stmt = $this->em->getConnection()->prepare($sql);
+
+            $stmt->execute();
+        }
+    }
+
+    public function deleteNotLinkedElements()
+    {
+        $sql = "
+            DELETE FROM KladrRegion WHERE id IN (
+                SELECT * FROM (
+                    SELECT id FROM KladrRegion
+                    WHERE parentCode NOT IN (
+                        SELECT id FROM KladrRegion
+                    )
+                ) AS t
+            )";
+        $stmt = $this->em->getConnection()->prepare($sql);
+
+        return $stmt->execute();
     }
 }

@@ -7,7 +7,7 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Bundle\DoctrineBundle\Command\DoctrineCommand;
-use n3b\Bundle\Kladr\Entity\Region;
+use n3b\Bundle\Kladr\Entity\KladrRegion;
 use Doctrine\ORM\Query\ResultSetMapping;
 
 class ImportEMSCommand extends DoctrineCommand
@@ -32,7 +32,7 @@ EOT
 
         foreach($result->rsp->locations as $city) {
             $sql = "
-            UPDATE Region r
+            UPDATE KladrRegion r
             SET r.emsTo = '".$city->value."'
             WHERE r.socr LIKE 'г' AND r.title LIKE '".$city->name."'
             ";
@@ -50,7 +50,7 @@ EOT
                 $region->name = 'Алания';
 
             $sql = "
-            UPDATE Region r
+            UPDATE KladrRegion r
             SET r.emsTo = '".$region->value."'
             WHERE r.level = 1 AND r.title REGEXP '".implode('|', explode(' ', $region->name))."'
             ";
