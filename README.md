@@ -1,4 +1,5 @@
 //rus
+Symfony 2.0.1
 Пакет для работы с Классификатором адресов России (КЛАДР) http://www.gnivc.ru/Document.aspx?id=1571
 мануал по структуре КЛАДРа можно найти здесь http://www.ksoft.ru/opis_kladr.htm
 
