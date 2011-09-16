@@ -26,8 +26,7 @@ EOT
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         echo 'Started at ', date('H:i:s'), "\n";
-        $em = $this->getDoctrineEntityManagers();
-        $em = $em[0];
+        $em = $this->getEntityManager('default');
 
         $db_path = __DIR__ . '/../Resources/KLADR/KLADR.DBF';
         $db = dbase_open($db_path, 0) or die("Error! Could not open dbase database file '$db_path'.");
@@ -40,8 +39,10 @@ EOT
             $region->setTitle(trim(iconv('cp866', 'utf8', $row['NAME'])));
 
             $code = trim($row['CODE']);
+
             if(substr($code, -2) != '00')
                 continue;
+            
             $code = substr($code, 0, -2);
             $region->setCode(str_pad($code, 11, '0', STR_PAD_LEFT));
 
@@ -63,6 +64,7 @@ EOT
             $region->setSocr(trim(iconv('cp866', 'utf8', $row['SOCR'])));
 
             $em->persist($region);
+            $em->flush($region);
 
             if (($i % $batchSize) == 0) {
                 $em->flush();

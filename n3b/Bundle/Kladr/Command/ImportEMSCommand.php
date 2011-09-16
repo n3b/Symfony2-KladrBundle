@@ -26,8 +26,7 @@ EOT
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         echo 'Started at ', date('H:i:s'), "\n";
-        $em = $this->getDoctrineEntityManagers();
-        $em = $em[0];
+        $em = $this->getEntityManager('default');
 
         $result = \json_decode(\file_get_contents('http://emspost.ru/api/rest/?method=ems.get.locations&type=cities'));
 

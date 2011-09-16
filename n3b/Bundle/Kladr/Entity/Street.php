@@ -2,43 +2,45 @@
 
 namespace n3b\Bundle\Kladr\Entity;
 
+use Doctrine\ORM\Mapping as ORM;
+
 /**
- * @orm:Entity(repositoryClass="n3b\Bundle\Kladr\Entity\StreetRepository")
+ * @ORM\Entity(repositoryClass="n3b\Bundle\Kladr\Entity\StreetRepository")
  */
 Class Street
 {
     /**
-     * @orm:Id
-     * @orm:Column(type="integer")
-     * @orm:GeneratedValue(strategy="AUTO")
+     * @ORM\Id
+     * @ORM\Column(type="integer")
+     * @ORM\GeneratedValue(strategy="AUTO")
      */
     private $id;
     /**
-     * @orm:Column
+     * @ORM\Column
      */
     private $socr;
     /**
-     * @orm:Column
+     * @ORM\Column
      */
     private $title;
     /**
-     * @orm:ManyToOne(targetEntity="Region")
+     * @ORM\ManyToOne(targetEntity="Region")
      */
     private $parent;
     /**
-     * @orm:Column(length="15", unique="true")
+     * @ORM\Column(length="15", unique="true")
      */
     private $code;
 	/**
-     * @orm:Column(length="11")
+     * @ORM\Column(length="11")
      */
     private $parentCode;
     /**
-     * @orm:Column(type="integer")
+     * @ORM\Column(type="integer")
      */
     private $zip;
     /**
-     * @orm:Column(type="bigint")
+     * @ORM\Column(type="bigint")
      */
     private $ocatd;
 

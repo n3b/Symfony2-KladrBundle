@@ -2,55 +2,57 @@
 
 namespace n3b\Bundle\Kladr\Entity;
 
+use Doctrine\ORM\Mapping as ORM;
+
 /**
- * @orm:Entity(repositoryClass="n3b\Bundle\Kladr\Entity\RegionRepository")
+ * @ORM\Entity(repositoryClass="n3b\Bundle\Kladr\Entity\RegionRepository")
  */
 Class Region
 {
     /**
-     * @orm:Id
-     * @orm:Column(type="integer")
-     * @orm:GeneratedValue(strategy="AUTO")
+     * @ORM\Id
+     * @ORM\Column(type="integer")
+     * @ORM\GeneratedValue(strategy="AUTO")
      */
     private $id;
     /**
-     * @orm:Column(type="string", length="20")
+     * @ORM\Column(type="string", length="20")
      */
     private $socr;
     /**
-     * @orm:Column
+     * @ORM\Column
      */
     private $title;
     /**
-     * @orm:ManyToOne(targetEntity="Region")
+     * @ORM\ManyToOne(targetEntity="Region")
      */
     private $parent;
     /**
-     * @orm:Column
+     * @ORM\Column
      */
     private $parentStr = '';
     /**
-     * @orm:Column(length="11", nullable="true")
+     * @ORM\Column(length="11", nullable="true")
      */
     private $code;
 	/**
-     * @orm:Column(length="11")
+     * @ORM\Column(length="11", nullable="true")
      */
     private $parentCode;
     /**
-     * @orm:Column(type="smallint")
+     * @ORM\Column(type="smallint")
      */
     private $level;
     /**
-     * @orm:Column
+     * @ORM\Column(nullable="true")
      */
     private $emsTo;
     /**
-     * @orm:Column(type="integer")
+     * @ORM\Column(type="integer")
      */
     private $zip;
     /**
-     * @orm:Column(type="bigint")
+     * @ORM\Column(type="bigint")
      */
     private $ocatd;
 
