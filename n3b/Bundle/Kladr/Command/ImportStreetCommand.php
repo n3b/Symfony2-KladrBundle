@@ -61,11 +61,13 @@ EOT
                 echo 'Inserted ', $i, ' records',"\n";
             }
         }
-
+        $em->flush();
+        echo 'Inserted ', $i, ' records',"\n";
         echo 'Success', "\n";
 
-        echo 'Assign parents', "\n";
+        echo 'Deleting dead links', "\n";
         $this->deleteNotLinkedElements();
+        echo 'Assigning parents', "\n";
         $this->updateParents();
         echo 'Success', "\n";
     }

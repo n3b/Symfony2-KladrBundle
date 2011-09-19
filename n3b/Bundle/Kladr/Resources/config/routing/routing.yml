@@ -1,12 +1,16 @@
 n3b_kladr_region:
-  pattern: /region/{query}
+  pattern: /kladr/region/{query}
   defaults: { _controller: kladr:getRegions }
 
 n3b_kladr_street:
-  pattern: /street/{region}/{query}
+  pattern: /kladr/street/{region}/{query}
   defaults: { _controller: kladr:getStreets }
   requirements:
     region: \d{10,11}
+
+n3b_kladr_ajax:
+  pattern: /kladr
+  defaults: { _controller: kladr:proceedAjax }
 
 n3b_kladr_ems_to:
   pattern: /emsTo/{region}/{weight}

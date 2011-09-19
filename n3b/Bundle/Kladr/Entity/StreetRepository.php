@@ -7,29 +7,30 @@ use Doctrine\ORM\EntityRepository;
 class StreetRepository extends EntityRepository
 {
 
-    public function getByQuery($query, $region)
+    public function getByQuery($args)
     {
         $dql = "
-            SELECT s FROM n3b\Bundle\Kladr\Entity\Street s
-            JOIN s.parent r WITH r.code = :region
+            SELECT PARTIAL s.{id, title} FROM n3b\Bundle\Kladr\Entity\KladrStreet s
+            JOIN s.parent r WITH r.id = :region
             WHERE LOWER(s.title) LIKE :query
             ORDER BY s.title";
         $count = "
-            SELECT COUNT(s) FROM n3b\Bundle\Kladr\Entity\Street s
-            JOIN s.parent r WITH r.code = :region
+            SELECT COUNT(s) FROM n3b\Bundle\Kladr\Entity\KladrStreet s
+            JOIN s.parent r WITH r.id = :region
             WHERE LOWER(s.title) LIKE :query";
 
         $q = $this->getEntityManager()->createQuery($dql);
         $q->setParameters(array(
-            'query' => \mb_strtolower($query, 'utf-8') . '%',
-            'region' => $region
+            'query' => \mb_strtolower($args['query'], 'utf-8') . '%',
+            'region' => $args['region']
         ));
         $qCount = $this->getEntityManager()->createQuery($count);
         $qCount->setParameters(array(
-            'query' => \mb_strtolower($query, 'utf-8') . '%',
-            'region' => $region
+            'query' => \mb_strtolower($args['query'], 'utf-8') . '%',
+            'region' => $args['region']
         ));
-
+        
+        $q->setMaxResults(10);
         $res['items'] = $q->getArrayResult();
         $res['count'] = $qCount->getSingleScalarResult();
 

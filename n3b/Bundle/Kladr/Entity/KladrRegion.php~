@@ -1,0 +1,53 @@
+<?php
+
+namespace n3b\Bundle\Kladr\Entity;
+
+use Doctrine\ORM\Mapping as ORM;
+
+/**
+ * @ORM\Entity(repositoryClass="n3b\Bundle\Kladr\Entity\RegionRepository")
+ */
+Class KladrRegion
+{
+    /**
+     * @ORM\Id
+     * @ORM\Column(type="bigint")
+     */
+    private $id;
+    /**
+     * @ORM\Column(type="string", length="20")
+     */
+    private $socr;
+    /**
+     * @ORM\Column
+     */
+    private $title;
+    /**
+     * @ORM\ManyToOne(targetEntity="KladrRegion")
+     */
+    private $parent;
+    /**
+     * @ORM\Column
+     */
+    private $fullParentTitle = '';
+	/**
+     * @ORM\Column(length="11", nullable="true")
+     */
+    private $parentCode;
+    /**
+     * @ORM\Column(type="smallint")
+     */
+    private $level;
+    /**
+     * @ORM\Column(nullable="true")
+     */
+    private $emsTo;
+    /**
+     * @ORM\Column(type="integer")
+     */
+    private $zip;
+    /**
+     * @ORM\Column(type="bigint")
+     */
+    private $ocatd;
+}

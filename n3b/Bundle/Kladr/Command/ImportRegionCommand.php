@@ -73,11 +73,16 @@ EOT
                 echo 'Inserted ', $i, ' records',"\n";
             }
         }
+        $em->flush();
+        echo 'Inserted ', $i, ' records',"\n";
         echo 'Success', "\n";
 
-        echo 'Assign parents', "\n";
+        echo 'Deleting dead links', "\n";
         $this->deleteNotLinkedElements();
+        echo 'Assigning parents', "\n";
         $this->updateParents();
+        echo 'Setting full parent title', "\n";
+        $this->setFullParentTitle();
         echo 'Success', "\n";
     }
 
@@ -103,10 +108,11 @@ EOT
     {
         for($i = 1; $i <= 3; $i++) {
             $sql = "
-                UPDATE Region r
-                JOIN r.parent p WITH p.level = $i
-                SET r.fullParentTitle = CONCAT(', ', p.title, ' ', LOWER(p.socr), p.fullParentTitle)
-                ";
+                UPDATE KladrRegion r
+                INNER JOIN KladrRegion p ON p.id = r.parent_id AND p.level = $i
+                SET r.fullParentTitle = CONCAT(', ', p.title, ' ', LOWER(p.socr)";
+                $sql .=  ($i > 1 ? ", p.fullParentTitle)" : ")");
+
             $stmt = $this->em->getConnection()->prepare($sql);
 
             $stmt->execute();

@@ -1,4 +1,8 @@
 services:
+  request:
+    synthetic:                      true
   kladr:
     class:      n3b\Bundle\Kladr\Service\Kladr
-    arguments:  ['@doctrine.orm.entity_manager']
+    arguments:
+      em:       '@doctrine.orm.entity_manager'
+      request:  '@request'

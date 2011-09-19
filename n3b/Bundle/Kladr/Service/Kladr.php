@@ -3,43 +3,81 @@
 namespace n3b\Bundle\Kladr\Service;
 
 use Symfony\Component\HttpFoundation\Response;
+use n3b\Bundle\Util\String;
 
 class Kladr
 {
-    private $em;
-    private $repositories;
+    protected $em;
+    protected $request;
 
-    public function __construct($em)
+    public function __construct($em, $request)
     {
         $this->em = $em;
-        $this->repo['region'] = $this->em->getRepository('n3b\Bundle\Kladr\Entity\Region');
-        $this->repo['street'] = $this->em->getRepository('n3b\Bundle\Kladr\Entity\Street');
+        $this->request = $request;
+        $this->repo['region'] = $this->em->getRepository('n3b\Bundle\Kladr\Entity\KladrRegion');
+        $this->repo['street'] = $this->em->getRepository('n3b\Bundle\Kladr\Entity\KladrStreet');
     }
 
     public function getRegions($query)
     {
         try {
-            $res = $this->repo['region']->getByQuery($query);
+            if(!\strlen($query))
+                throw new \Exception('the query is empty');
+            
+            $res = $this->repo['region']->getByQuery(array('query' => $query));
             $res['status'] = 'ok';
         } catch(\Exception $e) {
             $res['status'] = 'error';
             $res['err_message'] = $e->getMessage();
         }
 
-        return new Response(\json_encode($res));
+        return new Response(String::jsonEncode($res));
     }
 
     public function getStreets($query, $region)
     {
         try {
-            $res = $this->repo['street']->getByQuery($query, $region);
+            if(!\strlen($query))
+                throw new \Exception('the query is empty');
+
+            if(!strlen($region))
+                throw new \Exception('the region is empty');
+
+            $res = $this->repo['street']->getByQuery(array(
+                'query' => $query,
+                'region' => $region
+                ));
+
             $res['status'] = 'ok';
         } catch(\Exception $e) {
             $res['status'] = 'error';
             $res['err_message'] = $e->getMessage();
         }
 
-        return new Response(\json_encode($res));
+        return new Response(String::jsonEncode($res));
+    }
+
+    public function proceedAjax()
+    {
+        $params = $this->request->request->all();
+        $types = array('region', 'street');
+
+        try {
+            if(!isset($params['type']))
+                throw new \Exception('you must set the type');
+            elseif(!\in_array($params['type'], $types))
+                throw new \Exception('wrong type');
+            if(!isset($params['args']['query']))
+                throw new \Exception('you must set the query');
+
+            $res = $this->repo[$params['type']]->getByQuery($params['args']);
+            $res['status'] = 'ok';
+        } catch(\Exception $e) {
+            $res['status'] = 'error';
+            $res['err_message'] = $e->getMessage();
+        }
+
+        return new Response(String::jsonEncode($res));
     }
 
     public function getEmsTo($region, $weight)
@@ -65,6 +103,6 @@ class Kladr
 
         $addsStr = $region->getSocr().'. '.$region->getParentStr().', ул. '.$street->getTitle();
         
-        return new Response(\json_encode(array('status' => 'ok', 'adds' => $addsStr, 'region' => array('code' => $region->getCode(), 'title' => $region->getTitle()), 'street' => array('code' => $street->getCode(), 'title' => $street->getTitle()))));
+        return new Response(\n3b\Bundle\Util\String::jsonEncode(array('status' => 'ok', 'adds' => $addsStr, 'region' => array('code' => $region->getCode(), 'title' => $region->getTitle()), 'street' => array('code' => $street->getCode(), 'title' => $street->getTitle()))));
     }
 }
