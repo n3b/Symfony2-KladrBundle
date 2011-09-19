@@ -23,9 +23,9 @@ Symfony 2.0.1
 
 Импортируем данные из *.dbf: 
 
-    ./console kladr:import:region  (необязательный параметр --batch=x, кол-во записей на одну транзакцию, 2000 по умолчанию)
-    ./console kladr:import:street
-    ./console kladr:import:ems (по желанию)
+    ./console kladr:import:region --no-debug  (необязательный параметр --batch=x, кол-во записей на одну транзакцию, 2000 по умолчанию)
+    ./console kladr:import:street --no-debug
+    (по желанию) ./console kladr:import:ems --no-debug
 
 подключить маршруты в вашем приложении
 routing.yml:
