@@ -25,7 +25,7 @@ EOT
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        echo 'Started at ', date('H:i:s'), "\n";
+        $output->writeln('<info>Started at ' . date('H:i:s') . '</info>');
         $em = $this->em = $this->getEntityManager('default');
 
         $this->truncate();
@@ -58,18 +58,18 @@ EOT
             if (($i % $batchSize) == 0) {
                 $em->flush();
                 $em->clear();
-                echo 'Inserted ', $i, ' records',"\n";
+                $output->writeln('<info>Inserted '. $i. ' records</info>');
             }
         }
         $em->flush();
-        echo 'Inserted ', $i, ' records',"\n";
-        echo 'Success', "\n";
 
-        echo 'Deleting dead links', "\n";
+        $output->writeln('<info>Inserted '. $i. ' records</info>');
+        $output->writeln('<info>Success</info>');
+        $output->writeln('<info>Deleting dead links</info>');
         $this->deleteNotLinkedElements();
-        echo 'Assigning parents', "\n";
+        $output->writeln('<info>Assigning parents</info>');
         $this->updateParents();
-        echo 'Success', "\n";
+        $output->writeln('<info>Success</info>');
     }
 
     public function truncate()

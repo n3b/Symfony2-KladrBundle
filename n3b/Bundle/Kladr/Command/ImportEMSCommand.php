@@ -25,7 +25,7 @@ EOT
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        echo 'Started at ', date('H:i:s'), "\n";
+        $output->writeln('<info>Started at ' . date('H:i:s') . '</info>');
         $em = $this->getEntityManager('default');
 
         $result = \json_decode(\file_get_contents('http://emspost.ru/api/rest/?method=ems.get.locations&type=cities'));
@@ -59,6 +59,6 @@ EOT
             $stmt->execute();
         }
 
-        echo 'Success at ', date('H:i:s'), "\n";
+        $output->writeln('<info>Success at ' . date('H:i:s') . '</info>');
     }
 }

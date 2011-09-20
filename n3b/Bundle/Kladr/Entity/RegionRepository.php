@@ -10,20 +10,20 @@ class RegionRepository extends EntityRepository
     {
         $dql = "
             SELECT PARTIAL r.{id, title, fullParentTitle, emsTo} FROM n3b\Bundle\Kladr\Entity\KladrRegion r
-            WHERE r.level < 4 AND LOWER(r.title) LIKE :query
+            WHERE r.title LIKE :query AND r.level < 4
             ORDER BY r.title";
         $count = "
             SELECT COUNT(r) FROM n3b\Bundle\Kladr\Entity\KladrRegion r
-            WHERE r.level < 4 AND LOWER(r.title) LIKE :query";
+            WHERE r.title LIKE :query AND r.level < 4";
 
         $q = $this->getEntityManager()->createQuery($dql);
-        $q->setParameter('query', \mb_strtolower($args['query'], 'utf-8') . '%');
+        $q->setParameter('query', \mb_convert_case($args['query'], MB_CASE_TITLE, "UTF-8") . '%');
         $qCount = $this->getEntityManager()->createQuery($count);
-        $qCount->setParameter('query', \mb_strtolower($args['query'], 'utf-8') . '%');
+        $qCount->setParameter('query', \mb_convert_case($args['query'], MB_CASE_TITLE, "UTF-8") . '%');
 
         $q->setMaxResults(10);
-        $res['items'] = $q->getArrayResult();
         $res['count'] = $qCount->getSingleScalarResult();
+        $res['items'] = $q->getArrayResult();
         
         return $res;
     }
