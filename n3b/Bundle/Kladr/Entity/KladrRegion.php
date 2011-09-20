@@ -6,7 +6,7 @@ use Doctrine\ORM\Mapping as ORM;
 
 /**
  * @ORM\Entity(repositoryClass="n3b\Bundle\Kladr\Entity\RegionRepository")
- * @ORM\Table(indexes={@ORM\Index(name="region_title_idx",columns={"title", "level"})})
+ * @ORM\Table(indexes={@ORM\Index(name="region_title_idx",columns={"title"})})
  */
 Class KladrRegion
 {

@@ -10,11 +10,11 @@ class RegionRepository extends EntityRepository
     {
         $dql = "
             SELECT PARTIAL r.{id, title, fullParentTitle, emsTo} FROM n3b\Bundle\Kladr\Entity\KladrRegion r
-            WHERE r.title LIKE :query AND r.level < 4
+            WHERE r.title LIKE :query 
             ORDER BY r.title";
         $count = "
             SELECT COUNT(r) FROM n3b\Bundle\Kladr\Entity\KladrRegion r
-            WHERE r.title LIKE :query AND r.level < 4";
+            WHERE r.title LIKE :query";
 
         $q = $this->getEntityManager()->createQuery($dql);
         $q->setParameter('query', \mb_convert_case($args['query'], MB_CASE_TITLE, "UTF-8") . '%');
@@ -24,7 +24,7 @@ class RegionRepository extends EntityRepository
         $q->setMaxResults(10);
         $res['count'] = $qCount->getSingleScalarResult();
         $res['items'] = $q->getArrayResult();
-        
+
         return $res;
     }
 }
